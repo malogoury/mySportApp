@@ -5,6 +5,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataMap;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,5 +45,24 @@ public class Profile implements Serializable {
         }
         Bitmap userPhotoBitmap = BitmapFactory.decodeStream(imageStream);
         return userPhotoBitmap;
+    }
+
+    public DataMap toDataMap(){
+
+        DataMap dataMap = new DataMap();
+        dataMap.putString("username",username);
+        dataMap.putString("password",password);
+        dataMap.putInt("height",height_cm);
+        dataMap.putFloat("weight",weight_kg);
+        final InputStream imageStream;
+        try {
+            imageStream = new FileInputStream(photoPath);
+            final Bitmap userImage = BitmapFactory.decodeStream(imageStream);
+            Asset asset = WearService.createAssetFromBitmap(userImage);
+            dataMap.putAsset("photo", asset);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return dataMap;
     }
 }

@@ -28,14 +28,16 @@ public class MainActivity extends AppCompatActivity {
 
         TextView userName = findViewById(R.id.userName);
         userName.setText("Welcome " + userProfile.getUsername() + "!");
-
         ImageView userPic = findViewById(R.id.userPic);
         userPic.setImageBitmap(userProfile.getPhotoBitmap());
 
-        Intent intentWatch = new Intent (this, WearService.class);
-        intentWatch.setAction(WearService.ACTION_SEND.MESSAGE.name());
-        intentWatch.putExtra(WearService.MESSAGE, "Welcome "+userProfile.getUsername() + "!");
-        intentWatch.putExtra(WearService.PATH, BuildConfig.W_example_path_text);
-        startService(intentWatch);
+        sendProfileToWatch();
+    }
+
+    private void sendProfileToWatch() {
+        Intent intentWear = new Intent(MainActivity.this,WearService.class);
+        intentWear.setAction(WearService.ACTION_SEND.PROFILE_SEND.name());
+        intentWear.putExtra(WearService.PROFILE,userProfile);
+        startService(intentWear);
     }
 }

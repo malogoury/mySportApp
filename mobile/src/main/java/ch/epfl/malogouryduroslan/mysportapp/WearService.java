@@ -68,6 +68,12 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_some_other_key, (Asset) intent.getParcelableExtra(IMAGE));
                 sendPutDataMapRequest(putDataMapRequest);
                 break;
+            case PROFILE_SEND:
+                putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_profile_path);
+                Profile userProfile = (Profile) intent.getSerializableExtra(PROFILE);
+                putDataMapRequest.getDataMap().putDataMap(BuildConfig.W_profile_key, userProfile.toDataMap());
+                sendPutDataMapRequest(putDataMapRequest);
+                break;
             default:
                 Log.w(TAG, "Unknown action");
                 break;
@@ -83,6 +89,7 @@ public class WearService extends WearableListenerService {
     public static final String DATAMAP_INT_ARRAYLIST = "DATAMAP_INT_ARRAYLIST";
     public static final String IMAGE = "IMAGE";
     public static final String PATH = "PATH";
+    public static final String PROFILE = "PROFILE";
 
     public static Asset createAssetFromBitmap(Bitmap bitmap) {
         bitmap = resizeImage(bitmap, 390);
@@ -324,6 +331,6 @@ public class WearService extends WearableListenerService {
 
     // Constants
     public enum ACTION_SEND {
-        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET
+        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, PROFILE_SEND
     }
 }
