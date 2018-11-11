@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +25,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
     private File imageFile = null;
     private Profile userProfile = null;
+    private String USER_PROFILE = "USER_PROFILE";
 
 
     @Override
@@ -31,10 +34,29 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_profile, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_clear:
+                clearUser();
+                break;
+            case R.id.action_validate:
+                editUser();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     // Callback when "done" button is clicked
     // Save all data in userProfile class
     // Starts the intent to pass userProfile to loginActivity
-    public void editUser (View view) {
+    public void editUser () {
         TextView userName = findViewById(R.id.editUsername);
         TextView passWord = findViewById(R.id.editPassword);
         TextView height = findViewById(R.id.editWeight);
@@ -64,9 +86,23 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Pass userProfile back to loginActivity
         Intent intent = new Intent(EditProfileActivity.this, LoginActivity.class);
-        intent.putExtra("userProfile", userProfile);
+        intent.putExtra(USER_PROFILE, userProfile);
         setResult(AppCompatActivity.RESULT_OK,intent);
         finish();
+    }
+
+    private void clearUser() {
+        ImageView userImageView = findViewById(R.id.userImage);
+        TextView usernameTextView = findViewById(R.id.editUsername);
+        TextView passwordTextView = findViewById(R.id.editPassword);
+        TextView heightTextView = findViewById(R.id.editHeight);
+        TextView weightTextView = findViewById(R.id.editWeight);
+
+        userImageView.setImageDrawable(null);
+        usernameTextView.setText("");
+        passwordTextView.setText("");
+        heightTextView.setText("");
+        weightTextView.setText("");
     }
 
     // Callback from chooseImage button from EditProfileLayout

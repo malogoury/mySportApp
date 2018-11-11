@@ -74,12 +74,4 @@
         android:inputType="textPersonName"
         android:hint="Weight (kg)" />
 
-    <Button
-        android:id="@+id/editUserButton"
-        android:onClick="editUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:layout_gravity="center"/>
-
 </LinearLayout>

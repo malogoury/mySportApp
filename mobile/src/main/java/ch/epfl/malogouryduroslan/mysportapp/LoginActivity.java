@@ -15,6 +15,7 @@ public class LoginActivity extends AppCompatActivity {
 
     protected Profile userProfile = null;
     private static final int REGISTER_PROFILE = 1;
+    private String USER_PROFILE = "USER_PROFILE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REGISTER_PROFILE && resultCode == RESULT_OK) {
-            userProfile = (Profile) data.getSerializableExtra("userProfile");
+            userProfile = (Profile) data.getSerializableExtra(USER_PROFILE);
             if(userProfile != null) {
                 TextView userName = findViewById(R.id.UserName);
                 userName.setText(userProfile.username);
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         {
             Intent intentMainActivity = new Intent(LoginActivity.this,
                     MainActivity.class);
-            intentMainActivity.putExtra("userProfile", userProfile);
+            intentMainActivity.putExtra(USER_PROFILE, userProfile);
             startActivity(intentMainActivity);
         }
         else {
