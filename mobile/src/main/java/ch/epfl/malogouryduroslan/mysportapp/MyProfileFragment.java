@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -16,6 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,7 +38,9 @@ public class MyProfileFragment extends Fragment {
 
     private View fragmentView;
     private Profile userProfile;
+    private String userID;
     private String USER_PROFILE = "USER_PROFILE";
+    public static final String USER_ID = "USER_ID";
     private static final int EDIT_PROFILE_INFO = 1;
 
     public MyProfileFragment() {
@@ -48,12 +60,44 @@ public class MyProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         fragmentView = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
+//        Intent intent = getActivity().getIntent();
+//        userProfile = (Profile) intent.getSerializableExtra(USER_PROFILE);
+//        setUserImageAndProfileInfo();
+//        sendProfileToWatch();
+
         Intent intent = getActivity().getIntent();
-        userProfile = (Profile) intent.getSerializableExtra(USER_PROFILE);
-        setUserImageAndProfileInfo();
-        sendProfileToWatch();
+        userID = intent.getStringExtra(USER_ID);
+        readUserProfile();
 
         return fragmentView;
+    }
+
+    private void readUserProfile() {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference profileRef = database.getReference("Profiles");
+        profileRef.child(userID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String user_db = dataSnapshot.child("username").getValue(String.class);
+                String password_db = dataSnapshot.child("password").getValue(String.class);
+                int height_db = dataSnapshot.child("height").getValue(int.class);
+                float weight_db = dataSnapshot.child("weight").getValue(float.class);
+                String photo = dataSnapshot.child("photo").getValue(String.class);
+
+                userProfile = new Profile(user_db, password_db);
+                userProfile.password = password_db;
+                userProfile.height_cm = height_db;
+                userProfile.weight_kg = weight_db;
+                userProfile.photoPath = photo;
+
+                setUserImageAndProfileInfo();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Empty
+            }
+        });
     }
 
     @Override
@@ -67,7 +111,7 @@ public class MyProfileFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_edit:
                 Intent intentEditProfile = new Intent(getActivity(), EditProfileActivity.class);
-                intentEditProfile.putExtra(USER_PROFILE, userProfile);
+                intentEditProfile.putExtra(USER_ID, userID);
                 startActivityForResult(intentEditProfile, EDIT_PROFILE_INFO);
                 break;
         }
@@ -120,8 +164,20 @@ public class MyProfileFragment extends Fragment {
 
     private void setUserImageAndProfileInfo() {
 
-        ImageView imageView = fragmentView.findViewById(R.id.userImage);
-        imageView.setImageBitmap(userProfile.getPhotoBitmap());
+        //  Reference to an image file in Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl
+                (userProfile.photoPath);
+        storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                if (isAdded()) {
+                    final Bitmap selectedImage = BitmapFactory.decodeByteArray(bytes, 0, bytes
+                            .length);
+                    ImageView imageView = fragmentView.findViewById(R.id.userImage);
+                    imageView.setImageBitmap(selectedImage);
+                }
+            }
+        });
 
         TextView usernameTextView = fragmentView.findViewById(R.id.usernameValue);
         usernameTextView.setText(userProfile.username);

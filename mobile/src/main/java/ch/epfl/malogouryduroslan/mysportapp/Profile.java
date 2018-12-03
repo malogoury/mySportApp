@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 public class Profile implements Serializable {
     private static final String TAG = "Profile";
+    public static final String FB_tag = "Profiles";
 
     protected String username;
     protected String password;

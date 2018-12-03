@@ -2,12 +2,20 @@ package ch.epfl.malogouryduroslan.mysportapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
@@ -16,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     protected Profile userProfile = null;
     private static final int REGISTER_PROFILE = 1;
     private String USER_PROFILE = "USER_PROFILE";
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +58,42 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void clickedLoginButtonXmlCallback(View view) {
-        if (userProfile != null)
-        {
-            Intent intentMainActivity = new Intent(LoginActivity.this,
-                    MainActivity.class);
-            intentMainActivity.putExtra(USER_PROFILE, userProfile);
-            startActivity(intentMainActivity);
-        }
-        else {
-            TextView loginMessage = findViewById(R.id.LoginMessage);
-            loginMessage.setText("You are not registered yet!");
-            loginMessage.setTextColor(Color.RED);
-        }
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference profileRef = database.getReference(Profile.FB_tag);
+
+        final TextView mTextView = findViewById(R.id.LoginMessage);
+        final String usernameInput = ((EditText) findViewById(R.id.UserName)).getText().toString();
+        final String passwordInput = ((EditText) findViewById(R.id.Password)).getText().toString();
+
+        profileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean notMember = true;
+                for (final DataSnapshot user : dataSnapshot.getChildren()) {
+                    String usernameDatabase = user.child("username").getValue(String.class);
+                    String passwordDatabase = user.child("password").getValue(String.class);
+                    if (usernameInput.equals(usernameDatabase) && passwordInput.equals
+                            (passwordDatabase)) {
+                        userID = user.getKey();
+                        notMember = false;
+                        break;
+                    }
+                }
+                if (notMember) {
+                    TextView loginMessage = findViewById(R.id.LoginMessage);
+                    loginMessage.setText("You are not registered yet!");
+                    loginMessage.setTextColor(Color.RED);
+                } else {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra(MyProfileFragment.USER_ID, userID);
+                    startActivity(intent);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

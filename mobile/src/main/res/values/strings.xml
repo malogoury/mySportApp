@@ -29,4 +29,9 @@
     <string name="tab_title_new_recording">New Recording</string>
     <string name="tab_title_my_profile">My Profile</string>
     <string name="tab_title_history">My History</string>
+
+    <string name="toast_upload_FB_ok">Profile saved</string>
+    <string name="toast_upload_FB_notok">Profile not saved online</string>
+    <string name="missing_picture">Missing Picture</string>
+    <string name="upload_pic_notok">Error picture upload</string>
 </resources>

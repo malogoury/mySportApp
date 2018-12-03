@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "270766188342",
+    "firebase_url": "https://mysportapp-bd505.firebaseio.com",
+    "project_id": "mysportapp-bd505",
+    "storage_bucket": "mysportapp-bd505.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270766188342:android:5168e89e2e02b2ba",
+        "android_client_info": {
+          "package_name": "ch.epfl.malogouryduroslan.mysportapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270766188342-efv8tb9qt7jt6nrt578mkug45iuvur24.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ch.epfl.malogouryduroslan.mysportapp",
+            "certificate_hash": "06b5e044268528327c7ae146b2476caa04ed0262"
+          }
+        },
+        {
+          "client_id": "270766188342-k6k714ojg86u58foiec3rpn351oeth1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8jj0FCRJESJpQqelvg9avGHygDeE3e44"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270766188342-k6k714ojg86u58foiec3rpn351oeth1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
